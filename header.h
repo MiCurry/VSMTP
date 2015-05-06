@@ -27,7 +27,7 @@
 
 #define PORT_NUM 10333
 
-#define IP_ADD 128.193.54.226 // Address of flip1.engr.oregonstate.edu
+#define FLIP1 "128.193.54.226" // Address of flip1.engr.oregonstate.edu
 
 #define MAXLINE 4096
 

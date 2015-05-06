@@ -5,6 +5,7 @@
  ******************************/
 
 /* Socket_client */
+#define PROMPT ">>>"
 
 #include "client.h"
 #include "header.h"
@@ -54,14 +55,12 @@ int help(void){
 
 
 /***** CLIENT INIT ******/
-
-
 /* Connect to IP ADDRESS */
-int connectIP(int port, char ip[200]){
-/* PORT = port number
- * ip = ip in human readable format
- * family = either 4 or 6 for IPv4 or IPv6
- */
+int connectIP(int port, char ip[100]){
+    /* PORT = port number
+     * ip = ip in human readable format
+     * family = either 4 or 6 for IPv4 or IPv6
+     */
     struct sockaddr_in sa;
     int sockfd;
     int numbytes;
@@ -86,6 +85,84 @@ int connectIP(int port, char ip[200]){
 
     /* SEND MESSAGE AND WAIT FOR MESSAGE BACK */
 
+
+    return 1;
+}
+
+void shell(void){
+    int i, j;
+
+    char buffer[MAX_SIZE];
+    char command[MAX_SIZE];
+    char pl_buffer[PATH_MAX];
+
+    message_t msg;
+
+    /* Client shell */
+    while(1){
+        /* Clear the buffer and the msg struct */
+        memset(&buffer, '\0', MAX_SIZE + 1);
+        memset(&msg,  0, sizeof(msg));
+        flags.no_pl_flag = 0;
+
+        i = 0;
+        j = 0;
+
+        /* PROMPT */
+        printf("%s", PROMPT);   
+        fgets(buffer, MAX_SIZE, stdin);
+        /* END PROMPT */
+        
+        flags.no_pl_flag = 0;
+            
+        /* SPACE & BUFFER CHECK */
+        while(buffer[i] != ' '){
+            if(buffer[i] == '\n'){
+                flags.no_pl_flag = 1;
+                break;
+            }
+            i++;
+        }
+
+        /* CREATE MSG COMMAND */
+        snprintf(msg.command, i+1, "%s", buffer);
+        printf("%s\n", command);
+
+        /* CREATE MSG PAYLOAD */
+        if(flags.no_pl_flag != 1){
+            i++;    //Move past the space
+            for(j = 0 ; i < MAX_SIZE; i++){
+                pl_buffer[j] = buffer[i];
+                j++;
+
+                if(buffer[i] == '\0'){
+                    break;
+                }
+            }
+            /* PAYLOAD COPY */
+            snprintf(msg.payload, j-1, "%s", pl_buffer);
+        }
+
+        /* CONSTRUCT REST OF MESSAGE */
+        msg.message_type = MESSAGE_TYPE_NORMAL;
+        msg.num_bytes = sizeof(msg.command);
+
+        if(debug_value > 1){
+            printf("MT: %d \n", msg.message_type);
+            printf("MC: %s \n", msg.command);
+            printf("PL: %s \n", msg.payload);
+            printf("NB: %d \n", msg.num_bytes);
+        }
+
+
+    }
+}
+
+void sendMsg(int sockfd){
+    int numbytes;
+    char sendline[MAXLINE];
+    char recvline[MAXLINE];
+
     while(fgets(sendline, sizeof(sendline), stdin) != NULL){
         sendline[strlen(sendline) - 1] = 0;
         memset(recvline, 0, sizeof(recvline));
@@ -104,18 +181,6 @@ int connectIP(int port, char ip[200]){
         fprintf(stdout, "from server: <%s>\n", recvline);
     }
 
-    return 1;
-}
-
-void shell(void){
-
-    sendMsg();
-}
-
-
-void sendMsg(void){
-
-
 }
 
 
@@ -123,7 +188,7 @@ void sendMsg(void){
 /* MAIN */
 int main(int argc, char **argv, char **envp){
     int opt;
-    char ip[100];
+    char ip[100] = FLIP1;
     int port = PORT_NUM;
 
     memset((void *) &flags, 0, sizeof(flags_t));
@@ -170,8 +235,12 @@ int main(int argc, char **argv, char **envp){
     }
 
 
+    if(debug_value > 0){
+        printf("IP = %s\n", ip);
+        printf("PORT = %d\n", port);
+    }
+
     /*** SERVER ***/
-    connectIP(port, ip);
     shell();
 
     return 1;
