@@ -7,12 +7,7 @@
 /* Socket_client */
 
 #include "client.h"
-
-#define TRUE 1
-#define FALSE 0
-#define BUF_SIZE 256
-
-#define MAXLINE 4096
+#include "header.h"
 
 flags_t flags;
 
@@ -22,9 +17,14 @@ static sig_atomic_t signal_recived = FALSE;
 /** Helper functions **/
 
 void showHelp(void){
-    printf("Here is the help function!\n");
+    
+    printf("Chat Program");
+    printf("Usage: -I IP_Address -P [port_number](Optional - Default = %d)\n", PORT_NUM);
+    printf("\t -I: specify ip_address \n");
+    printf("\t -P: specify port_number - (Optional - Default = %d) \n", PORT_NUM);
+    printf("\t -h: Show this help message\n");
 
-
+    exit(EXIT_SUCCESS);
 }
 
 /* Signal Handler's & On Exit Functions */
@@ -55,12 +55,9 @@ int help(void){
 
 /***** CLIENT INIT ******/
 
-/* ConnectIPV4
- * This is a good function, but it only connects to IPV4. It would be nice to
- * be able to connect to IPV6 and IPV4 by checking the IP address that is
- * entered. Hence the above function */
 
-int connectIPV4(int port, char ip[200]){
+/* Connect to IP ADDRESS */
+int connectIP(int port, char ip[200]){
 /* PORT = port number
  * ip = ip in human readable format
  * family = either 4 or 6 for IPv4 or IPv6
@@ -86,23 +83,12 @@ int connectIPV4(int port, char ip[200]){
     if(debug_value > 0 ){
         printf("DEBUG: Connection Successfull \n");
     }
-    
-    
+
     /* SEND MESSAGE AND WAIT FOR MESSAGE BACK */
-        if(debug_value > 0){
-            printf("before fgets\n");
-        }
 
     while(fgets(sendline, sizeof(sendline), stdin) != NULL){
-        if(debug_value > 0){
-            printf("after fgets\n");
-        }
         sendline[strlen(sendline) - 1] = 0;
         memset(recvline, 0, sizeof(recvline));
-    
-        if(debug_value > 0){
-            printf("Before write\n");
-        }
 
         numbytes = write(sockfd, sendline, strlen(sendline));
         if(numbytes == -1){
@@ -110,20 +96,12 @@ int connectIPV4(int port, char ip[200]){
             exit(EXIT_FAILURE);
         }
 
-        if(debug_value > 0){
-            printf("Before read\n");
-        }
-
         if(read(sockfd,recvline, sizeof(recvline)) == 0){
             perror("Socket is closed");
             break;
         }
-        if(debug_value > 0){
-            printf("After read");
-        }
 
         fprintf(stdout, "from server: <%s>\n", recvline);
-
     }
 
     return 1;
@@ -146,7 +124,7 @@ void sendMsg(void){
 int main(int argc, char **argv, char **envp){
     int opt;
     char ip[100];
-    int port = 0;
+    int port = PORT_NUM;
 
     memset((void *) &flags, 0, sizeof(flags_t));
 
@@ -162,52 +140,28 @@ int main(int argc, char **argv, char **envp){
         /* AT EXIT AND SIGNAL HANDLERS */
         atexit(onexit_function);
         signal(SIGINT, signal_handler);
-        signal(SIGHUP, signal_handler);     //SIGHUP because osu-wifi sucks 
-    }
-    /* Taken from Instructor Chaneys' show IP */ 
-    if(argc < 2){
-        fprintf(stderr, "Usage: client_server IP_address [port_number]\n");
-        return(EXIT_FAILURE);
+        signal(SIGHUP, signal_handler);     
     }
 
-    
-    while((opt=getopt(argc, argv, "i:p:H:hv")) != -1){
+    /* Taken from Instructor Chaneys' show IP */ 
+    while((opt=getopt(argc, argv, "I:P:H:hv")) != -1){
         switch(opt){
             case 'v':
                 flags.flag_v = 1;
                 break;
             /* IP ADDRESS */
-            case 'i':
+            case 'I':
                 if(debug_value > 0){
                     printf("DEBUG: IP Addr = %s\n", optarg);
                 }
                 strcpy(ip, optarg);
                 break;
             /* PORT NUMBER */
-            case 'p': 
-                if(debug_value > 0){
-                    printf("DEBUG: PORT# = %s\n", optarg);
+            case 'P': 
+                if(debug_value > 0){ printf("DEBUG: PORT# = %s\n", optarg);
                 }
                 port = atoi(optarg);
                 break;
-            /* CONNECT VIA HOST NAME */
-            case 'H':
-            /*
-                hn.ai_family = AF_UNSPEC;
-                hn.ai_socktype = SOCK_STREAM;
-
-                if((status = getaddrinfo(optarg, NULL, &hn, &res)) != 0){
-                    perror("getaddrinfo error");
-                    exit(EXIT_FAILURE);
-                }
-                //Assuming only one thing returned
-                p = res;
-                if(p->ai_family == AF_INET){
-                    sai.sin_addr = (struct sockaddr_in *)p->ai_addr;
-                }
-
-                break;
-             */
             case 'h':
                 showHelp();
                 exit(EXIT_SUCCESS); // SHOUlDN"T GET HERE 
@@ -217,7 +171,7 @@ int main(int argc, char **argv, char **envp){
 
 
     /*** SERVER ***/
-    connectIPV4(port, ip);
+    connectIP(port, ip);
     shell();
 
     return 1;
