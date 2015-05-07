@@ -4,29 +4,10 @@
  * Assignment #4 
  */
 
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <signal.h>
-#include <errno.h>
-#include <pwd.h>
-#include <linux/limits.h>
-#include <fcntl.h>
-#include <limits.h>
-#include <mqueue.h>
-#include <pthread.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#include <sys/socket.h>
-#include <sys/select.h>
-
+#include "header.h"
 
 #define SERVER_CONFIRM "CONFIRMED"
+#define PATH "~/Public/userNames"
 
 /* RAD-ASS FLAG STRUCT */
 typedef struct flags_s{ 
@@ -39,6 +20,7 @@ static void signal_handler(int signum);
 
 
 /* SERVER COMMANDS */
+int createFile(char *name);
 int cdCmd(void);
 int dirCmd(void);
 int pwdCmd(void);
@@ -49,4 +31,4 @@ void showHelp(void);
 
 /* SERVER IP CONNECTION */
 void recMsgs(void);
-int createPort(void);
+int createIPV4(int port);

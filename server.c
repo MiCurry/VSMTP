@@ -5,7 +5,6 @@
  ******************************/
 
 #include "server.h"
-#include "header.h"
 
 #define TRUE 1
 #define FALSE 0
@@ -47,7 +46,6 @@ int createFile(char *name){
     int fd = -1;
     int flag = O_APPEND | O_RDWR | O_CREAT;
     int mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-    int bytes_written = 0;
 
     fd = open(name, flag, mode);
     if(fd == -1){
@@ -62,14 +60,13 @@ int createFile(char *name){
 
 /**** Helper Functions *****/
 
-/*vvvvvvvvvvvvv COMMANDS START  vvvvvvvvvvvvvvvv*/
+/*
 int createUser(char userName[10]){
 
 
 }
+*/
 
-/*^^^^^^^^^^^    COMMANDS END    ^^^^^^^^^^^^^^*/
-/* SERVER SPECIFIC FUNCTIONS */
 /* CREATES OUR IPV4 STREAM SOCKET */
 int createIPV4(int port){
     int listenfd, sockfd, connfd;
@@ -178,7 +175,7 @@ int createIPV4(int port){
 
                 memset(buf, 0, sizeof(buf));
                 /* READ FROM FD */
-                if((nbytes = read(sockfd, msg, sizeof(message_t))) == 0){
+                if((nbytes = read(sockfd, (char *) &msg, sizeof(message_t))) == 0){
                     /* CLIENT LOSED CONNECTION */
                     close(sockfd);
                     FD_CLR(sockfd, &allset);
@@ -189,11 +186,6 @@ int createIPV4(int port){
                         printf("DEBUG: Client lossed connection! \n");
                     }
                     /*********/
-                }
-
-                /* SEND RESPONSE BACK TO CLIENT */
-                if((nbytes = write(sockfd, buf, nbytes)) == 0){
-
                 }
             }
         }

@@ -26,16 +26,14 @@ static void onexit_function(void);
 /* CLIENTS COMMANDS */
 int getMessages(void);
 int getUsers(void);
-int sendMessage(void);
 int readInbox(void);
 int saveMessage(void);
 int saveInbox(void);
-
 int deleteMessage(void);
-    
 int createUser(void);
 int lookUpUser(void);
 int deleteUser(void);
+int help(void);
 
 
 /* CREATE SOCKET */

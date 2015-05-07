@@ -8,7 +8,6 @@
 #define PROMPT ">>>"
 
 #include "client.h"
-#include "header.h"
 
 flags_t flags;
 
@@ -28,6 +27,11 @@ static void signal_handler(int signum){
 
 /* Cleans up the mq at exit */
 static void onexit_function(void){
+
+
+}
+
+void clearMsgStruct(){
 
 
 }
@@ -73,7 +77,6 @@ int connectIP(int port, char ip[100]){
 /****************************/
 /********* SHELL ************/
 
-
 /*** Shell Commands ***/
 int help(void){
     if(debug_value > 0){
@@ -81,9 +84,6 @@ int help(void){
     }
     return 0;
 }
-
-
-
 /*************************/
 
 void shell(void){
@@ -96,14 +96,15 @@ void shell(void){
     message_t msg;
 
     while(1){
-        memset(&buffer, '\0', MAX_SIZE + 1);
-        memset(&msg,  0, sizeof(msg));
+        memset(&buffer, '\0', sizeof(buffer) + 1);
+        memset(&msg,  0, sizeof(message_t));
+
         flags.no_pl_flag = 0;
         i = 0;
         j = 0;
 
         printf("%s", PROMPT);   
-        fgets(buffer, MAX_SIZE, stdin);
+        fgets(buffer, sizeof(buffer), stdin);
         
         /* SPACE & BUFFER CHECK */
         while(buffer[i] != ' '){
@@ -115,7 +116,7 @@ void shell(void){
         }
 
         snprintf(msg.command, i+1, "%s", buffer);
-        printf("%s\n", command);
+        printf("%s\n", msg.command);
 
         if(flags.no_pl_flag != 1){
             i++;    //Move past the space
@@ -165,9 +166,7 @@ void sendMsg(message_t msg){
     }
     printf("Message Sent\n");
 
-    fprintf(stdout, "from server: <%s>\n", recvline);
 }
-
 
 
 /* MAIN */
