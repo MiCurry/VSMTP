@@ -36,3 +36,23 @@
 #define BUF_SIZE 256
 #define LISTENQ 1024
 #define MAXLINE 4096
+
+/* Gracefully taken from  a cs344 assignedment header created by Instructor Jessie R. Chaney */
+# define COMMAND_LENGTH  11
+# define MAX_SIZE sizeof(message_t)
+# define PAYLOAD_LENGTH  PATH_MAX
+
+typedef struct message_s {
+  int message_type;
+  char command[COMMAND_LENGTH];
+  char payload[PAYLOAD_LENGTH];
+  int num_bytes;
+}message_t;
+
+# define MESSAGE_TYPE_ERROR   -1
+# define MESSAGE_TYPE_NORMAL   0
+# define MESSAGE_TYPE_DIR      1
+# define MESSAGE_TYPE_DIR_END  2
+# define MESSAGE_TYPE_SEND     3
+# define MESSAGE_TYPE_SEND_END 4
+

@@ -43,9 +43,30 @@ void showHelp(void){
     exit(EXIT_SUCCESS);
 }
 
+int createFile(char *name){
+    int fd = -1;
+    int flag = O_APPEND | O_RDWR | O_CREAT;
+    int mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+    int bytes_written = 0;
+
+    fd = open(name, flag, mode);
+    if(fd == -1){
+        fprintf(stderr, "Could not create userName file. Errno = %d\n", errno);
+        perror("cannot create file");
+        return -1;
+    }
+
+    close(fd);
+    return 1;
+} 
+
 /**** Helper Functions *****/
 
 /*vvvvvvvvvvvvv COMMANDS START  vvvvvvvvvvvvvvvv*/
+int createUser(char userName[10]){
+
+
+}
 
 /*^^^^^^^^^^^    COMMANDS END    ^^^^^^^^^^^^^^*/
 /* SERVER SPECIFIC FUNCTIONS */
@@ -66,6 +87,8 @@ int createIPV4(int port){
 
     struct sockaddr_in servaddr;   
     struct sockaddr_in cliaddr;
+
+    message_t msg;
 
     servaddr.sin_family = AF_INET;
     servaddr.sin_addr.s_addr = htons(INADDR_ANY);
@@ -155,7 +178,7 @@ int createIPV4(int port){
 
                 memset(buf, 0, sizeof(buf));
                 /* READ FROM FD */
-                if((nbytes = read(sockfd, buf, sizeof(buf))) == 0){
+                if((nbytes = read(sockfd, msg, sizeof(message_t))) == 0){
                     /* CLIENT LOSED CONNECTION */
                     close(sockfd);
                     FD_CLR(sockfd, &allset);
@@ -169,15 +192,35 @@ int createIPV4(int port){
                 }
 
                 /* SEND RESPONSE BACK TO CLIENT */
-                if((nbytes =write(sockfd, buf, nbytes)) == 0){
+                if((nbytes = write(sockfd, buf, nbytes)) == 0){
 
                 }
-                
             }
         }
     }
 }
 
+int serverInit(void){
+    char *name = "userNames";
+    
+    //If user file does not exists, then create it and add oscar header..
+    if(-1 == access(name, F_OK)){
+        if(createFile(name) == 0){
+           if(debug_value > 0){
+                printf("DEBUG:  Could not create userName file %s\n", name);
+           }
+            exit(EXIT_FAILURE);
+        }; 
+        if(debug_value > 0){
+            printf("DEBUG: Username file created\n");
+        }
+        return 1;
+    }
+    if(debug_value > 0){
+        printf("DEBUG: Username file already exists\n");
+    }
+    return 1;
+}
 
 
 /* MAIN */
@@ -222,7 +265,9 @@ int main(int argc, char *argv[]){
     /* CREATE SERVER PORT */
 
     /* RECIVE MESSAGES */
+    serverInit();
     createIPV4(port);
+
     //recMsgs();
 
 
