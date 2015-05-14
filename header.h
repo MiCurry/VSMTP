@@ -47,18 +47,15 @@
 # define MAX_SUBJECT 32
 # define MAX_MESSAGE_LEN 10000
 
-
-
 typedef struct message_s{
-    int     ip_source : 32;
-    int     ip_dest : 32;
-    char    user_source[MAX_USER_NAME];
-    char    user_to[MAX_USER_NAME];
-    char    subject[MAX_SUBJECT]
-    int     status_code : 16;
-    int     message_len = MAX_MESSAGE_LEN;
-    int     header_len = (sizeof(ip_source) + sizeof(ip_dest) + sizeof(user_source) + sizeof(user_dest) + sizeof(subject) + sizeof(status_code) + sizeof(message_len));
-    char    message[message_len];
+    int status_code : 16;
+    unsigned int ip_source : 32;
+    unsigned int ip_dest : 32;
+    char user_source[MAX_USER_NAME];
+    char user_to[MAX_USER_NAME];
+    char subject[MAX_SUBJECT];
+    long header_len;
+    char message[MAX_MESSAGE_LEN];
 } message_t;
 
 typedef struct message_s_1 {
@@ -70,10 +67,4 @@ typedef struct message_s_1 {
 
 # define MAX_SIZE sizeof(message_t)
 
-# define MESSAGE_TYPE_ERROR   -1
-# define MESSAGE_TYPE_NORMAL   0
-# define MESSAGE_TYPE_DIR      1
-# define MESSAGE_TYPE_DIR_END  2
-# define MESSAGE_TYPE_SEND     3
-# define MESSAGE_TYPE_SEND_END 4
 
