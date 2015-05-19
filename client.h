@@ -19,8 +19,8 @@ typedef struct flags_s{
 
 // *** FUNCTION PROTOTYPES *** //
 /* SIGNAL HANDLERS */
-static void signal_handler(int signum);
-static void onexit_function(void);
+void signal_handler(int signum);
+void onexit_function(void);
 
 
 /* CLIENTS COMMANDS */

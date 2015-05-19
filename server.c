@@ -67,6 +67,15 @@ int createUser(char userName[10]){
 }
 */
 
+
+int reciveMsg(message_t *msg){
+
+
+    return 0;
+}
+
+
+
 /* CREATES OUR IPV4 STREAM SOCKET */
 int createIPV4(int port){
     int listenfd, sockfd, connfd;
@@ -159,7 +168,6 @@ int createIPV4(int port){
             }
         }
 
-
         /* CHECK FOR IF A CLIENT HAS SENT US INFOMATION */
         for(i = 0 ; i <= MAX_CLIENTS; i++){
             sockfd = client[i];
@@ -176,7 +184,7 @@ int createIPV4(int port){
                 memset(buf, 0, sizeof(buf));
                 /* READ FROM FD */
                 if((nbytes = read(sockfd, (char *) &msg, sizeof(message_t))) == 0){
-                    /* CLIENT LOSED CONNECTION */
+                    /* CLIENT LOST CONNECTION */
                     close(sockfd);
                     FD_CLR(sockfd, &allset);
                     client[i] = NOT_IN_USE;
@@ -187,6 +195,9 @@ int createIPV4(int port){
                     }
                     /*********/
                 }
+
+
+
             }
         }
     }

@@ -30,5 +30,7 @@ void getCmd(void);
 void showHelp(void);
 
 /* SERVER IP CONNECTION */
+int sendMsg(void);
 void recMsgs(void);
 int createIPV4(int port);
+
