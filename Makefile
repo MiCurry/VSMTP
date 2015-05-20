@@ -8,7 +8,7 @@
 
 
 CC=
-CFLAGS= -Wall -Wshadow -Wunreachable-code -Wredundant-decls -Wmissing-declarations -Wold-style-definition -Wmissing-prototypes -Wdeclaration-after-statement
+CFLAGS= -Wall -Wshadow -Wunreachable-code -Wredundant-decls -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement
 SERVER= server.c
 CLIENT= client.c
 TEST = tests.c
@@ -31,5 +31,4 @@ test : $(TEST)
 clean:
 	rm server
 	rm client
-	rm userNames
 	rm test
