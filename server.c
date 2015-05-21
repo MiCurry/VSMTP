@@ -68,10 +68,21 @@ int createUser(char userName[10]){
 */
 
 
-int reciveMsg(message_t *msg){
+int reciveMsg(message_t *msg, int sockFD){
+
+    if(debug_value > 0){
+        printMessageHead(msg, 1);
+        printf("Client FD: %d\n", sockFD);
+    }
 
 
-    return 0;
+
+    /* Decipher Message and decide what to do with it */
+
+    /* Send a Message Back */
+
+
+    return 1;
 }
 
 
@@ -195,12 +206,28 @@ int createIPV4(int port){
                     }
                     /*********/
                 }
-
-
+                
+                reciveMsg(&msg, sockfd);
 
             }
         }
     }
+}
+
+int sendMsg(message_t *msg, int sockFD){
+    int numbytes;
+    
+    printf("DEBUG: Client FD: %d\n", sockFD);
+
+    numbytes = write(sockFD, (char *) &msg, sizeof(message_t));
+    if(numbytes == -1){
+        perror("Write Error");
+        exit(EXIT_FAILURE);
+    }
+    if(debug_value > 0){
+        printf("DEBUG: Message sent successfully!\n");
+    }
+    return 1;
 }
 
 int serverInit(void){

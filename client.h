@@ -4,6 +4,9 @@
  ** Project
  ******************************/
 
+#ifndef CLIENT_H
+ #define CLIENT_H
+
 #include "header.h"
 
 #define SERVER_CONFIRM "CONFIRMED"
@@ -43,3 +46,4 @@ void sendMsg(message_t msg);
 void showHelp(void);
 void usage(void);
 
+#endif

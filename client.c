@@ -5,9 +5,9 @@
  ******************************/
 
 /* Socket_client */
-#define PROMPT ">>>"
 
 #include "client.h"
+#include "statusCodes.h"
 
 flags_t flags;
 
@@ -64,7 +64,7 @@ int connectIP(int port, char ip[100]){
     }
 
 
-    return 1;
+    return sockfd;
 }
 
 
@@ -107,20 +107,18 @@ void shell(void){
 void sendMsg(message_t msg){
     message_t recv_msg;
     int numbytes;
-    char recvline[MAXLINE];
-    int sockfd;
+    int sockfd = -1;
 
-    connectIP(PORT_NUM, FLIP1);
-
-    memset(recvline, 0, sizeof(recvline));
+    sockfd = connectIP(PORT_NUM, FLIP1);
 
     numbytes = write(sockfd, (char *) &msg, sizeof(message_t));
     if(numbytes == -1){
         perror("Write Error");
         exit(EXIT_FAILURE);
     }
-    printf("Message Sent\n");
-
+    if(debug_value > 0){
+        printf("DEBUG: Message sent successfully!");
+    }
 }
 
 
@@ -182,8 +180,15 @@ int main(int argc, char **argv, char **envp){
         //printf("PORT = %d\n", port);
     }
 
-    /*** SERVER ***/
-    shell();
+    message_t msg_1;
+    message_t msg_2;
+
+    fillMessageHeader(&msg_1, "300", "1.1.1.1", "2.2.2.2", "Miles", "Jessica", "This is my message!");
+    printMessageHead(&msg_1, 1);
+
+    fillMessageHeader(&msg_2, MSG_TYPE_CMD, "0.0.0.0", FLIP1, "Miles", "Jessica", "A Message to flip!");
+    printMessageHead(&msg_2, 1);
+    sendMsg(msg_2);
 
     return 1;
 }
