@@ -3,6 +3,10 @@
  ** CS-372-001 - Spring 2015
  ** Project
  ******************************/
+#ifndef HEADER_H
+ #define HEADER_H
+
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,6 +34,8 @@
 #define FLIP1 "128.193.54.226" // Address of flip1.engr.oregonstate.edu
 #define FLIP2
 
+#define PROMPT ">>>"
+
 #define MAXLINE 4096
 
 #define TRUE 1
@@ -38,8 +44,18 @@
 #define LISTENQ 1024
 #define MAXLINE 4096
 
+/*** Commands ***/
+#define CMD_ADD "add"
+#define CMD_INBOX "inbox"
+#define CMD_READ "read"
+#define CMD_SEND "send"
+#define CMD_LIST "list"
+#define CMD_ISA "isa"
+
+
 /* Gracefully taken from  a cs344 assignedment header created by Instructor Jessie R. Chaney */
 
+/* Lengths and max sizes */
 # define COMMAND_LENGTH 11
 # define PAYLOAD_LENGTH 100
 # define HEADER_FIELD 32
@@ -71,7 +87,14 @@ typedef struct message_s_1 {
 
 /* Helper Functions */
 void clearMsgStruct(message_t *msg);
-int fillMessage(message_t *msg, char *status_code[STATUS_CODE_LEN], char *ip_source[IP_CHAR_LEN], char *ip_dest[IP_CHAR_LEN], char *user_srouce, char *user_to, char *message);
+int fillMessageHeader(message_t *msg, 
+                     char status_code[STATUS_CODE_LEN], 
+                     char ip_source[IP_CHAR_LEN], 
+                     char ip_dest[IP_CHAR_LEN], 
+                     char user_source[MAX_USER_NAME], 
+                     char user_dest[MAX_USER_NAME], 
+                     char message[MAX_MESSAGE_LEN]);
+
 void printMessageHead(message_t *msg, int i);
 
 void clearMsgStruct(message_t *msg){
@@ -109,3 +132,4 @@ void printMessageHead(message_t *msg, int i){
     }
 }
 
+#endif 

@@ -80,10 +80,66 @@ int help(void){
     }
     return 0;
 }
+
+int client_add(char *params){
+    if(debug_value > 0){
+        printf("DEBUG: client_add\n");
+    }
+
+    return 1;
+}
+
+int client_inbox(char *params){
+    if(debug_value > 0){
+        printf("DEBUG: client_inbox\n");
+    }
+
+    return 1;
+}
+
+int client_read(char *params){
+    if(debug_value > 0){
+        printf("DEBUG: client_read\n");
+    }
+
+    return 1;
+}
+
+int client_send(char *params){
+    if(debug_value > 0){
+        printf("DEBUG: client_send\n");
+    }
+
+    return 1;
+}
+
+int client_list(char *params){
+    if(debug_value > 0){
+        printf("DEBUG: client_list\n");
+    }
+
+    return 1;
+}
+
+int client_isa(char *params){
+    message_t msg;
+
+    if(debug_value > 0){
+        printf("DEBUG: client_isa\n");
+    }
+    
+    fillMessageHeader(&msg, MSG_TYPE_CMD, 
+
+    return 1;
+}
+
 /*************************/
 
 void shell(void){
     int i, j;
+
+    int argc;
+    char *argv[MAX_SIZE];
 
     char buffer[MAX_SIZE];
     char command[MAX_SIZE];
@@ -97,10 +153,28 @@ void shell(void){
 
         printf("%s", PROMPT);   
         fgets(buffer, sizeof(buffer), stdin);
+        printf("DEBUG: %s\n", buffer);
         
-        /* SPACE & BUFFER CHECK */
-
-
+        /* Message Decipher */
+        if(0 == strncmp(buffer, CMD_ADD, strlen(CMD_ADD))){
+            client_add(buffer);
+            continue;
+        }else if(0 == strncmp(buffer, CMD_INBOX, strlen(CMD_INBOX))){
+            client_inbox(buffer);
+            continue;
+        }else if(0 == strncmp(buffer, CMD_READ, strlen(CMD_READ))){
+            client_read(buffer);
+            continue;
+        }else if(0 == strncmp(buffer, CMD_SEND, strlen(CMD_SEND))){
+            client_send(buffer);
+            continue;
+        }else if(0 == strncmp(buffer, CMD_LIST, strlen(CMD_LIST))){
+            client_list(buffer);
+            continue;
+        }else if(0 == strncmp(buffer, CMD_ISA, strlen(CMD_ISA))){
+            client_isa(buffer);
+            continue;
+        }
     }
 }
 
@@ -179,7 +253,10 @@ int main(int argc, char **argv, char **envp){
         //printf("IP = %s\n", ip);
         //printf("PORT = %d\n", port);
     }
+    
+    shell();
 
+/*
     message_t msg_1;
     message_t msg_2;
 
@@ -188,7 +265,8 @@ int main(int argc, char **argv, char **envp){
 
     fillMessageHeader(&msg_2, MSG_TYPE_CMD, "0.0.0.0", FLIP1, "Miles", "Jessica", "A Message to flip!");
     printMessageHead(&msg_2, 1);
-    sendMsg(msg_2);
+
+*/
 
     return 1;
 }
