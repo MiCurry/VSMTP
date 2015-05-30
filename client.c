@@ -127,9 +127,9 @@ int client_isa(char *params){
     if(debug_value > 0){
         printf("DEBUG: client_isa\n");
     }
-    
-    fillMessageHeader(&msg, MSG_TYPE_CMD, 
 
+
+    
     return 1;
 }
 
@@ -254,19 +254,18 @@ int main(int argc, char **argv, char **envp){
         //printf("PORT = %d\n", port);
     }
     
-    shell();
+//    shell();
 
-/*
     message_t msg_1;
     message_t msg_2;
 
     fillMessageHeader(&msg_1, "300", "1.1.1.1", "2.2.2.2", "Miles", "Jessica", "This is my message!");
     printMessageHead(&msg_1, 1);
+    sendMsg(msg_1);
 
     fillMessageHeader(&msg_2, MSG_TYPE_CMD, "0.0.0.0", FLIP1, "Miles", "Jessica", "A Message to flip!");
     printMessageHead(&msg_2, 1);
-
-*/
+    sendMsg(msg_2);
 
     return 1;
 }

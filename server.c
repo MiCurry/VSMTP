@@ -60,33 +60,6 @@ int createFile(char *name){
 
 /**** Helper Functions *****/
 
-/*
-int createUser(char userName[10]){
-
-
-}
-*/
-
-
-int reciveMsg(message_t *msg, int sockFD){
-
-    if(debug_value > 0){
-        printMessageHead(msg, 1);
-        printf("Client FD: %d\n", sockFD);
-    }
-
-
-
-    /* Decipher Message and decide what to do with it */
-
-    /* Send a Message Back */
-
-
-    return 1;
-}
-
-
-
 /* CREATES OUR IPV4 STREAM SOCKET */
 int createIPV4(int port){
     int listenfd, sockfd, connfd;
@@ -116,6 +89,7 @@ int createIPV4(int port){
     connfd = -1;
 
     listenfd = socket(AF_INET, SOCK_STREAM, 0);
+
     if(bind(listenfd, (struct sockaddr *) &servaddr, sizeof(servaddr)) != 0){
         perror("Could not bind");
         exit(EXIT_FAILURE);
@@ -192,7 +166,6 @@ int createIPV4(int port){
                     printf("DEBUG: Recived communication from client! \n");
                 }
 
-                memset(buf, 0, sizeof(buf));
                 /* READ FROM FD */
                 if((nbytes = read(sockfd, (char *) &msg, sizeof(message_t))) == 0){
                     /* CLIENT LOST CONNECTION */
@@ -206,12 +179,25 @@ int createIPV4(int port){
                     }
                     /*********/
                 }
-                
-                reciveMsg(&msg, sockfd);
+
+            printMessageHead(&msg, 1);
 
             }
         }
     }
+}
+
+
+int recivMsg(message_t *msg, int sockFD){
+    int i, j;
+
+    int argc;
+    char *argv[MAX_SIZE];
+
+    char buffer[MAX_SIZE];
+    char command[MAX_SIZE];
+    char pl_buffer[PATH_MAX];
+
 }
 
 int sendMsg(message_t *msg, int sockFD){

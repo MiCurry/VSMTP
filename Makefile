@@ -8,7 +8,7 @@
 
 
 CC=
-CFLAGS= -Wall -Wshadow -Wunreachable-code -Wredundant-decls -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement
+CFLAGS= -Wall -Wshadow -Wredundant-decls -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement
 SERVER= server.c
 CLIENT= client.c
 SOURCES=
