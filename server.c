@@ -58,7 +58,28 @@ int createFile(char *name){
     return 1;
 } 
 
-/**** Helper Functions *****/
+
+int addUser(char userName[MAX_USER_NAME]){
+
+
+}
+
+int recivMail(message_t *msg){
+
+
+}
+
+int forwardMail(message_t *msg){
+
+
+}
+
+
+
+int cmdReads(message_t *msg){
+
+}
+
 
 /* CREATES OUR IPV4 STREAM SOCKET */
 int createIPV4(int port){
@@ -180,7 +201,7 @@ int createIPV4(int port){
                     /*********/
                 }
 
-            printMessageHead(&msg, 1);
+                recivMsg(msg, sockfd);
 
             }
         }
@@ -188,7 +209,7 @@ int createIPV4(int port){
 }
 
 
-int recivMsg(message_t *msg, int sockFD){
+int recivMsg(message_t msg_r, int sockFD){
     int i, j;
 
     int argc;
@@ -197,10 +218,16 @@ int recivMsg(message_t *msg, int sockFD){
     char buffer[MAX_SIZE];
     char command[MAX_SIZE];
     char pl_buffer[PATH_MAX];
+            
+    if(debug_value > 0){
+        printMessageHead(&msg_r, 1);
+    }
+
+    sendMsg(msg_r, sockFD);
 
 }
 
-int sendMsg(message_t *msg, int sockFD){
+int sendMsg(message_t msg, int sockFD){
     int numbytes;
     
     printf("DEBUG: Client FD: %d\n", sockFD);
@@ -208,9 +235,9 @@ int sendMsg(message_t *msg, int sockFD){
     numbytes = write(sockFD, (char *) &msg, sizeof(message_t));
     if(numbytes == -1){
         perror("Write Error");
-        exit(EXIT_FAILURE);
     }
     if(debug_value > 0){
+        printMessageHead(&msg, 1);
         printf("DEBUG: Message sent successfully!\n");
     }
     return 1;

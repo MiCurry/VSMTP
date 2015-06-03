@@ -179,9 +179,9 @@ void shell(void){
 }
 
 void sendMsg(message_t msg){
-    message_t recv_msg;
     int numbytes;
     int sockfd = -1;
+    message_t msg_r;
 
     sockfd = connectIP(PORT_NUM, FLIP1);
 
@@ -191,7 +191,21 @@ void sendMsg(message_t msg){
         exit(EXIT_FAILURE);
     }
     if(debug_value > 0){
-        printf("DEBUG: Message sent successfully!");
+        printf("DEBUG: Message sent successfully!\n");
+    }
+
+    r_msg(msg_r, sockfd);
+
+}
+
+void r_msg(message_t msg_r, int sockfd){
+    int nbytes;
+
+    nbytes = read(sockfd, (char *) &msg_r, sizeof(message_t));
+
+    if(debug_value > 0){
+        printf("DEBUG: Message received from server!\n");
+        printMessageHead(&msg_r, 1);
     }
 }
 
@@ -254,7 +268,7 @@ int main(int argc, char **argv, char **envp){
         //printf("PORT = %d\n", port);
     }
     
-//    shell();
+//shell();
 
     message_t msg_1;
     message_t msg_2;
@@ -263,9 +277,9 @@ int main(int argc, char **argv, char **envp){
     printMessageHead(&msg_1, 1);
     sendMsg(msg_1);
 
-    fillMessageHeader(&msg_2, MSG_TYPE_CMD, "0.0.0.0", FLIP1, "Miles", "Jessica", "A Message to flip!");
-    printMessageHead(&msg_2, 1);
-    sendMsg(msg_2);
+//    fillMessageHeader(&msg_2, MSG_TYPE_CMD, "0.0.0.0", FLIP1, "Miles", "Jessica", "A Message to flip!");
+ //   printMessageHead(&msg_2, 1);
+  //  sendMsg(msg_2);
 
     return 1;
 }

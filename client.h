@@ -39,10 +39,11 @@ int deleteUser(void);
 int help(void);
 
 
-/* CREATE SOCKET */
+/* SOCKET */
 int connectIP(int port, char ip[200]);
 void shell(void);
 void sendMsg(message_t msg);
+void r_msg(message_t msg_r, int sockfd);
 void showHelp(void);
 void usage(void);
 
