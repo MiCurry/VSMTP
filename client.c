@@ -12,35 +12,16 @@
 flags_t flags;
 
 int debug_value = 2;
+
 static sig_atomic_t signal_recived = FALSE;
 
-/** Helper functions **/
-void usage(void){
-    
-}
-
-/* Signal Handler's & On Exit Functions */
-void signal_handler(int signum){
-    signal_recived = TRUE;
-    exit(EXIT_SUCCESS);
-}
-
-/* Cleans up the mq at exit */
-void onexit_function(void){
-
-
-}
-
+void signal_handler(int signum){ signal_recived = TRUE; exit(EXIT_SUCCESS);}
+void onexit_function(void){ }
 
 
 /************************/
-/***** CLIENT INIT ******/
-/* Connect to IP ADDRESS */
+/*****   CLIENT    ******/
 int connectIP(int port, char ip[100]){
-    /* PORT = port number
-     * ip = ip in human readable format
-     * family = either 4 or 6 for IPv4 or IPv6
-     */
     struct sockaddr_in sa;
     int sockfd;
     int numbytes;
@@ -63,7 +44,6 @@ int connectIP(int port, char ip[100]){
         printf("DEBUG: Connection Successfull \n");
     }
 
-
     return sockfd;
 }
 
@@ -80,12 +60,10 @@ int help(void){
     }
     return 0;
 }
-
 int client_add(char *params){
     if(debug_value > 0){
         printf("DEBUG: client_add\n");
     }
-
     return 1;
 }
 
@@ -93,7 +71,6 @@ int client_inbox(char *params){
     if(debug_value > 0){
         printf("DEBUG: client_inbox\n");
     }
-
     return 1;
 }
 
@@ -101,7 +78,6 @@ int client_read(char *params){
     if(debug_value > 0){
         printf("DEBUG: client_read\n");
     }
-
     return 1;
 }
 
@@ -109,7 +85,6 @@ int client_send(char *params){
     if(debug_value > 0){
         printf("DEBUG: client_send\n");
     }
-
     return 1;
 }
 
@@ -117,24 +92,18 @@ int client_list(char *params){
     if(debug_value > 0){
         printf("DEBUG: client_list\n");
     }
-
     return 1;
 }
 
 int client_isa(char *params){
-    message_t msg;
-
     if(debug_value > 0){
         printf("DEBUG: client_isa\n");
     }
-
-
-    
     return 1;
 }
 
-/*************************/
 
+/*** ZE CLIENT ***/
 void shell(void){
     int i, j;
 
@@ -175,6 +144,8 @@ void shell(void){
             client_isa(buffer);
             continue;
         }
+
+
     }
 }
 
@@ -209,29 +180,17 @@ void r_msg(message_t msg_r, int sockfd){
     }
 }
 
+void init(void){
+    memset((void *) &flags, 0, sizeof(flags_t));
+    umask(0);
+    atexit(onexit_function);
+    signal(SIGINT, signal_handler);
+    signal(SIGHUP, signal_handler);     
+    pthread_exit((void *) pthread_self());
+}
 
-/* MAIN */
 int main(int argc, char **argv, char **envp){
     int opt;
-
-    memset((void *) &flags, 0, sizeof(flags_t));
-
-    /* INIT FUNCTIONS */
-    {
-        umask(0);
-
-        /* DEBUG MESG TEMPLATE */
-        if(debug_value > 0 ){
-            printf("DEBUG: \n");
-        }
-
-        /* AT EXIT AND SIGNAL HANDLERS */
-        atexit(onexit_function);
-        signal(SIGINT, signal_handler);
-        signal(SIGHUP, signal_handler);     
-    }
-
-    /* Taken from Instructor Chaneys' show IP */ 
     while((opt=getopt(argc, argv, "I:P:H:hv")) != -1){
         switch(opt){
             case 'v':
@@ -251,35 +210,12 @@ int main(int argc, char **argv, char **envp){
                 //port = atoi(optarg);
                 break;
             case 'h':
-                printf("Chat Program");
-                printf("Usage: -I IP_Address -P [port_number](Optional - Default = %d)\n", PORT_NUM);
-                printf("\t -I: specify ip_address \n");
-                printf("\t -P: specify port_number - (Optional - Default = %d) \n", PORT_NUM);
-                printf("\t -h: Show this help message\n");
-
-                exit(EXIT_SUCCESS);
+                break;
         }
-
     }
 
-
-    if(debug_value > 0){
-        //printf("IP = %s\n", ip);
-        //printf("PORT = %d\n", port);
-    }
-    
-//shell();
-
-    message_t msg_1;
-    message_t msg_2;
-
-    fillMessageHeader(&msg_1, "300", "1.1.1.1", "2.2.2.2", "Miles", "Jessica", "This is my message!");
-    printMessageHead(&msg_1, 1);
-    sendMsg(msg_1);
-
-//    fillMessageHeader(&msg_2, MSG_TYPE_CMD, "0.0.0.0", FLIP1, "Miles", "Jessica", "A Message to flip!");
- //   printMessageHead(&msg_2, 1);
-  //  sendMsg(msg_2);
+    pthread_t init_t; 
+    pthread_create(&init_t, NULL, (void *) init, NULL);
 
     return 1;
 }
