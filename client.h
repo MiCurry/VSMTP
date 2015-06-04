@@ -4,6 +4,9 @@
  ** Project
  ******************************/
 
+#ifndef CLIENT_H
+ #define CLIENT_H
+
 #include "header.h"
 
 #define SERVER_CONFIRM "CONFIRMED"
@@ -19,8 +22,8 @@ typedef struct flags_s{
 
 // *** FUNCTION PROTOTYPES *** //
 /* SIGNAL HANDLERS */
-static void signal_handler(int signum);
-static void onexit_function(void);
+void signal_handler(int signum);
+void onexit_function(void);
 
 
 /* CLIENTS COMMANDS */
@@ -36,10 +39,12 @@ int deleteUser(void);
 int help(void);
 
 
-/* CREATE SOCKET */
+/* SOCKET */
 int connectIP(int port, char ip[200]);
 void shell(void);
 void sendMsg(message_t msg);
+void r_msg(message_t msg_r, int sockfd);
 void showHelp(void);
 void usage(void);
 
+#endif

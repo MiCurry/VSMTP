@@ -3,6 +3,8 @@
  * CS344-001
  * Assignment #4 
  */
+#ifndef SEVER_H
+#define SEVER_H
 
 #include "header.h"
 
@@ -30,5 +32,9 @@ void getCmd(void);
 void showHelp(void);
 
 /* SERVER IP CONNECTION */
-void recMsgs(void);
+int sendMsg(message_t *msg, int sockfd);
+int reciveMsg(message_t *msg, int sockFD);
+int serverInit(void);
 int createIPV4(int port);
+
+#endif

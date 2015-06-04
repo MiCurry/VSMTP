@@ -5,9 +5,9 @@
  ******************************/
 
 /* Socket_client */
-#define PROMPT ">>>"
 
 #include "client.h"
+#include "statusCodes.h"
 
 flags_t flags;
 
@@ -20,21 +20,17 @@ void usage(void){
 }
 
 /* Signal Handler's & On Exit Functions */
-static void signal_handler(int signum){
+void signal_handler(int signum){
     signal_recived = TRUE;
     exit(EXIT_SUCCESS);
 }
 
 /* Cleans up the mq at exit */
-static void onexit_function(void){
+void onexit_function(void){
 
 
 }
 
-void clearMsgStruct(){
-
-
-}
 
 
 /************************/
@@ -68,7 +64,7 @@ int connectIP(int port, char ip[100]){
     }
 
 
-    return 1;
+    return sockfd;
 }
 
 
@@ -84,10 +80,66 @@ int help(void){
     }
     return 0;
 }
+
+int client_add(char *params){
+    if(debug_value > 0){
+        printf("DEBUG: client_add\n");
+    }
+
+    return 1;
+}
+
+int client_inbox(char *params){
+    if(debug_value > 0){
+        printf("DEBUG: client_inbox\n");
+    }
+
+    return 1;
+}
+
+int client_read(char *params){
+    if(debug_value > 0){
+        printf("DEBUG: client_read\n");
+    }
+
+    return 1;
+}
+
+int client_send(char *params){
+    if(debug_value > 0){
+        printf("DEBUG: client_send\n");
+    }
+
+    return 1;
+}
+
+int client_list(char *params){
+    if(debug_value > 0){
+        printf("DEBUG: client_list\n");
+    }
+
+    return 1;
+}
+
+int client_isa(char *params){
+    message_t msg;
+
+    if(debug_value > 0){
+        printf("DEBUG: client_isa\n");
+    }
+
+
+    
+    return 1;
+}
+
 /*************************/
 
 void shell(void){
     int i, j;
+
+    int argc;
+    char *argv[MAX_SIZE];
 
     char buffer[MAX_SIZE];
     char command[MAX_SIZE];
@@ -99,73 +151,62 @@ void shell(void){
         memset(&buffer, '\0', sizeof(buffer) + 1);
         memset(&msg,  0, sizeof(message_t));
 
-        flags.no_pl_flag = 0;
-        i = 0;
-        j = 0;
-
         printf("%s", PROMPT);   
         fgets(buffer, sizeof(buffer), stdin);
+        printf("DEBUG: %s\n", buffer);
         
-        /* SPACE & BUFFER CHECK */
-        while(buffer[i] != ' '){
-            if(buffer[i] == '\n'){
-                flags.no_pl_flag = 1;
-                break;
-            }
-            i++;
+        /* Message Decipher */
+        if(0 == strncmp(buffer, CMD_ADD, strlen(CMD_ADD))){
+            client_add(buffer);
+            continue;
+        }else if(0 == strncmp(buffer, CMD_INBOX, strlen(CMD_INBOX))){
+            client_inbox(buffer);
+            continue;
+        }else if(0 == strncmp(buffer, CMD_READ, strlen(CMD_READ))){
+            client_read(buffer);
+            continue;
+        }else if(0 == strncmp(buffer, CMD_SEND, strlen(CMD_SEND))){
+            client_send(buffer);
+            continue;
+        }else if(0 == strncmp(buffer, CMD_LIST, strlen(CMD_LIST))){
+            client_list(buffer);
+            continue;
+        }else if(0 == strncmp(buffer, CMD_ISA, strlen(CMD_ISA))){
+            client_isa(buffer);
+            continue;
         }
-
-        snprintf(msg.command, i+1, "%s", buffer);
-        printf("%s\n", msg.command);
-
-        if(flags.no_pl_flag != 1){
-            i++;    //Move past the space
-            for(j = 0 ; i < MAX_SIZE; i++){
-                pl_buffer[j] = buffer[i];
-                j++;
-
-                if(buffer[i] == '\0'){
-                    break;
-                }
-            }
-
-            snprintf(msg.payload, j-1, "%s", pl_buffer);
-        }
-
-        msg.message_type = MESSAGE_TYPE_NORMAL;
-        msg.num_bytes = sizeof(msg.command);
-
-        if(debug_value > 1){
-            printf("MT: %d \n", msg.message_type);
-            printf("MC: %s \n", msg.command);
-            printf("PL: %s \n", msg.payload);
-            printf("NB: %d \n", msg.num_bytes);
-        }
-
-        if(strcmp(msg.command, "ADD") == 0){
-            sendMsg(msg);
-        }
-
     }
 }
 
 void sendMsg(message_t msg){
-    message_t recv_msg;
     int numbytes;
-    char recvline[MAXLINE];
-    int sockfd;
+    int sockfd = -1;
+    message_t msg_r;
 
-    connectIP(PORT_NUM, FLIP1);
-
-    memset(recvline, 0, sizeof(recvline));
+    sockfd = connectIP(PORT_NUM, FLIP1);
 
     numbytes = write(sockfd, (char *) &msg, sizeof(message_t));
     if(numbytes == -1){
         perror("Write Error");
         exit(EXIT_FAILURE);
     }
-    printf("Message Sent\n");
+    if(debug_value > 0){
+        printf("DEBUG: Message sent successfully!\n");
+    }
 
+    r_msg(msg_r, sockfd);
+
+}
+
+void r_msg(message_t msg_r, int sockfd){
+    int nbytes;
+
+    nbytes = read(sockfd, (char *) &msg_r, sizeof(message_t));
+
+    if(debug_value > 0){
+        printf("DEBUG: Message received from server!\n");
+        printMessageHead(&msg_r, 1);
+    }
 }
 
 
@@ -226,9 +267,19 @@ int main(int argc, char **argv, char **envp){
         //printf("IP = %s\n", ip);
         //printf("PORT = %d\n", port);
     }
+    
+//shell();
 
-    /*** SERVER ***/
-    shell();
+    message_t msg_1;
+    message_t msg_2;
+
+    fillMessageHeader(&msg_1, "300", "1.1.1.1", "2.2.2.2", "Miles", "Jessica", "This is my message!");
+    printMessageHead(&msg_1, 1);
+    sendMsg(msg_1);
+
+//    fillMessageHeader(&msg_2, MSG_TYPE_CMD, "0.0.0.0", FLIP1, "Miles", "Jessica", "A Message to flip!");
+ //   printMessageHead(&msg_2, 1);
+  //  sendMsg(msg_2);
 
     return 1;
 }
