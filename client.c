@@ -216,6 +216,18 @@ int main(int argc, char **argv, char **envp){
 
     pthread_t init_t; 
     pthread_create(&init_t, NULL, (void *) init, NULL);
+    
+    message_t msg_1;
+    message_t msg_2;
+
+    fillMessageHeader(&msg_1, "300", "1.1.1.1", "2.2.2.2", "Miles", "Jessica", "This is my message!");
+    printMessageHead(&msg_1, 1);
+    sendMsg(msg_1);
+
+    fillMessageHeader(&msg_2, MSG_TYPE_CMD, "0.0.0.0", FLIP1, "Miles", "Jessica", "A Message to flip!");
+    printMessageHead(&msg_2, 1);
+    sendMsg(msg_2);
+    
 
     return 1;
 }
