@@ -59,20 +59,11 @@ int createFile(char *name){
 } 
 
 
-int addUser(char userName[MAX_USER_NAME]){
+int addUser(char userName[MAX_USER_NAME]){}
 
+int recivMail(message_t *msg){}
 
-}
-
-int recivMail(message_t *msg){
-
-
-}
-
-int forwardMail(message_t *msg){
-
-
-}
+int forwardMail(message_t *msg){}
 
 
 
