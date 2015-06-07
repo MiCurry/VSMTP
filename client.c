@@ -28,14 +28,11 @@ flags_t flags;
 
 static sig_atomic_t signal_recived = FALSE;
 void signal_handler(int signum){signal_recived = TRUE; exit(EXIT_FAILURE);}
-void onexit_function(void){NULL}
+void onexit_function(void){;}
 
 int connectIP(int port, char ip[100]){
     struct sockaddr_in sa;
     int sockfd;
-    int numbytes;
-    char sendline[MAXLINE];
-    char recvline[MAXLINE];
 
     inet_pton(AF_INET, ip, &sa.sin_addr.s_addr);
     sa.sin_port = htons(port);
