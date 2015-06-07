@@ -106,9 +106,39 @@ int client_read(char *params){
 }
 
 int client_send(char *params){
-    if(debug_value > 0){
-        printf("DEBUG: client_send\n");
-    }
+    message_t msg_1;
+  	char statCode[STATUS_CODE_LEN+1];
+	char source[IP_CHAR_LEN];
+	char dest[IP_CHAR_LEN];
+	char from[MAX_USER_NAME];
+	char to[MAX_USER_NAME];
+	char messageBody[MAX_MESSAGE_LEN];
+
+   if(debug_value > 0){
+        printf("DEBUG: client_send\n>>>");
+    	printf("Please enter your status code \n>>>");
+        fgets(statCode, sizeof(statCode), stdin);
+		printf("Please enter your ip \n>>>");
+        fgets(source, sizeof(source), stdin);
+		printf("Please enter the ip of your destination \n>>>");
+        fgets(dest, sizeof(dest), stdin);
+	}
+	else{
+		strcpy(statCode, "300");
+		strcpy(source, "1.1.1.1");
+		strcpy(dest, "2.2.2.2");
+	}	
+	printf("Please enter who the message is from \n>>>");
+    fgets(from, sizeof(from), stdin);
+	printf("Please enter who the message is to \n>>>");
+    fgets(to, sizeof(to), stdin);
+	printf("Please enter your message \n>>>");
+    fgets(messageBody, sizeof(messageBody), stdin);
+	fillMessageHeader(&msg_1, statCode, source, dest, from, to, messageBody);
+	printMessageHead(&msg_1, 1);
+    sendMsg(msg_1);
+
+//    fillMessageHeader(&msg_1, "300", "1.1.1.1", "2.2.2.2", "Miles", "Jessica", "This is my message!");
 
     return 1;
 }
@@ -267,15 +297,14 @@ int main(int argc, char **argv, char **envp){
         //printf("IP = %s\n", ip);
         //printf("PORT = %d\n", port);
     }
-    
-//shell();
+    shell();
 
-    message_t msg_1;
-    message_t msg_2;
+    //message_t msg_1;
+   // message_t msg_2;
 
-    fillMessageHeader(&msg_1, "300", "1.1.1.1", "2.2.2.2", "Miles", "Jessica", "This is my message!");
-    printMessageHead(&msg_1, 1);
-    sendMsg(msg_1);
+//    fillMessageHeader(&msg_1, "300", "1.1.1.1", "2.2.2.2", "Miles", "Jessica", "This is my message!");
+  //  printMessageHead(&msg_1, 1);
+    //sendMsg(msg_1);
 
 //    fillMessageHeader(&msg_2, MSG_TYPE_CMD, "0.0.0.0", FLIP1, "Miles", "Jessica", "A Message to flip!");
  //   printMessageHead(&msg_2, 1);
