@@ -6,6 +6,8 @@
 
 #include "server.h"
 
+#define TRUE 1
+#define FALSE 0
 #define BUF_SIZE 256
 #define LISTENQ 1024
 #define MAXLINE 4096
@@ -13,23 +15,32 @@
 #define MAX_CLIENTS FD_SETSIZE
 #define NOT_IN_USE -1
 
-int debug_value = 1;
+int debug_value = 4;
 flags_t flags;
 static sig_atomic_t signal_recived = FALSE;
 
-static void signal_handler(int signum){ signal_recived = TRUE; exit(EXIT_FAILURE);}
-static void onexit_function(void){NULL}
+
+/* Signal Handler's & On Exit Functions */
+
+static void signal_handler(int signum){
+    signal_recived = TRUE;
+    exit(EXIT_SUCCESS);
+}
+
+/* Cleans up the mq at exit */
+static void onexit_function(void){
+    }
 
 void showHelp(void){
     printf("Chat Program Server");
     printf("Usage: -P [port_number](Optional - Default = %d)\n", PORT_NUM);
     printf("\t -P: specify port_number - (Optional - Default = %d) \n", PORT_NUM);
     printf("\t -h: Show this help message\n");
+
     exit(EXIT_SUCCESS);
 }
 
-
-int createFile(char *name){ //Move this to header.h
+int createFile(char *name){
     int fd = -1;
     int flag = O_APPEND | O_RDWR | O_CREAT;
     int mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
@@ -40,11 +51,13 @@ int createFile(char *name){ //Move this to header.h
         perror("cannot create file");
         return -1;
     }
+
     close(fd);
     return 1;
 } 
 
 
+<<<<<<< HEAD
 int addUser(char userName[MAX_USER_NAME]){}
 int recivMail(message_t *msg){}
 
@@ -54,28 +67,29 @@ int addUser(char userName[MAX_USER_NAME]){
         printf("DEBUG: addUser function\n")
     }
     return 1;
+=======
+int addUser(char userName[MAX_USER_NAME]){
+
+
+>>>>>>> working
 }
 
 int recivMail(message_t *msg){
-    if(debug_value > 0){
-        printf("DEBUG: recivMail function\n")
-    }
-    return 1;
+
+
 }
 
 int forwardMail(message_t *msg){
-    if(debug_value > 0){
-        printf("DEBUG: forwardMail function\n")
-    }
-    return 1;
+
+
 }
 
+
+
 int cmdReads(message_t *msg){
-    if(debug_value > 0){
-        printf("DEBUG: addUser function\n")
-    }
-    return 1;
+
 }
+
 
 int createIPV4(int port){
     int listenfd, sockfd, connfd;
@@ -189,19 +203,16 @@ int createIPV4(int port){
                     FD_CLR(sockfd, &allset);
                     client[i] = NOT_IN_USE;
 
-                    /* DEBUG */
                     if(debug_value > 3){
                         printf("DEBUG: Client lossed connection! \n");
                     }
-                    /*********/
                 }
-
                 recivMsg(msg, sockfd);
-
             }
         }
     }
 }
+
 
 int recivMsg(message_t msg_r, int sockFD){
     int i, j;
@@ -240,11 +251,13 @@ int sendMsg(message_t msg, int sockFD){
 int serverInit(void){
     char *name = "userNames";
     
+    //If user file does not exists, then create it and add oscar header..
     if(-1 == access(name, F_OK)){
         if(createFile(name) == 0){
            if(debug_value > 0){
                 printf("DEBUG:  Could not create userName file %s\n", name);
            }
+            exit(EXIT_FAILURE);
         }; 
         if(debug_value > 0){
             printf("DEBUG: Username file created\n");
