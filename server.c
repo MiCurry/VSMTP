@@ -15,30 +15,13 @@
 #define MAX_CLIENTS FD_SETSIZE
 #define NOT_IN_USE -1
 
-int debug_value = 4;
+int debug_value = 1;
+
 flags_t flags;
 static sig_atomic_t signal_recived = FALSE;
 
-
-/* Signal Handler's & On Exit Functions */
-
-static void signal_handler(int signum){
-    signal_recived = TRUE;
-    exit(EXIT_SUCCESS);
-}
-
-/* Cleans up the mq at exit */
-static void onexit_function(void){
-    }
-
-void showHelp(void){
-    printf("Chat Program Server");
-    printf("Usage: -P [port_number](Optional - Default = %d)\n", PORT_NUM);
-    printf("\t -P: specify port_number - (Optional - Default = %d) \n", PORT_NUM);
-    printf("\t -h: Show this help message\n");
-
-    exit(EXIT_SUCCESS);
-}
+static void signal_handler(int signum){ signal_recived = TRUE; exit(EXIT_SUCCESS);}
+static void onexit_function(void){}
 
 int createFile(char *name){
     int fd = -1;
@@ -51,43 +34,16 @@ int createFile(char *name){
         perror("cannot create file");
         return -1;
     }
-
     close(fd);
     return 1;
 } 
 
 
-<<<<<<< HEAD
-int addUser(char userName[MAX_USER_NAME]){}
-int recivMail(message_t *msg){}
-
-int forwardMail(message_t *msg){}
 int addUser(char userName[MAX_USER_NAME]){
     if(debug_value > 0){
-        printf("DEBUG: addUser function\n")
+        printf("DEBUG: addUser function\n");
     }
     return 1;
-=======
-int addUser(char userName[MAX_USER_NAME]){
-
-
->>>>>>> working
-}
-
-int recivMail(message_t *msg){
-
-
-}
-
-int forwardMail(message_t *msg){
-
-
-}
-
-
-
-int cmdReads(message_t *msg){
-
 }
 
 
@@ -102,8 +58,6 @@ int createIPV4(int port){
     fd_set allset;
     fd_set rset;
     socklen_t clilen;
-
-    char buf[MAXLINE];
 
     struct sockaddr_in servaddr;   
     struct sockaddr_in cliaddr;
@@ -207,29 +161,20 @@ int createIPV4(int port){
                         printf("DEBUG: Client lossed connection! \n");
                     }
                 }
-                recivMsg(msg, sockfd);
+                reciveMsg(msg, sockfd);
             }
         }
     }
 }
 
 
-int recivMsg(message_t msg_r, int sockFD){
-    int i, j;
-
-    int argc;
-    char *argv[MAX_SIZE];
-
-    char buffer[MAX_SIZE];
-    char command[MAX_SIZE];
-    char pl_buffer[PATH_MAX];
-            
+int reciveMsg(message_t msg_r, int sockFD){ 
     if(debug_value > 0){
         printMessageHead(&msg_r, 1);
     }
 
     sendMsg(msg_r, sockFD);
-
+    return 1;
 }
 
 int sendMsg(message_t msg, int sockFD){
@@ -304,7 +249,6 @@ int main(int argc, char *argv[]){
                 port = atoi(optarg);
                 break;
             case 'h':
-                showHelp();
                 exit(EXIT_SUCCESS); // SHOUlDN"T GET HERE 
         }
 

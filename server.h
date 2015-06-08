@@ -40,25 +40,11 @@ static void signal_handler(int signum);
 
 /* SERVER COMMANDS */
 int createFile(char *name);
-int cdCmd(void);
-int dirCmd(void);
-int pwdCmd(void);
-int homeCmd(void);
-void put(void);
-void getCmd(void);
-void showHelp(void);
+int addUser(char userName[MAX_USER_NAME]);
 
 /* SERVER IP CONNECTION */
 int sendMsg(message_t msg, int sockfd);
-<<<<<<< HEAD
-int reciveMsg(message_t msg, int sockFD);
-=======
-<<<<<<< HEAD
-int reciveMsg(message_t *msg, int sockFD);
-=======
-int reciveMsg(message_t msg, int sockFD);
->>>>>>> master
->>>>>>> working
+int reciveMsg(message_t msg_r, int sockFD);
 int serverInit(void);
 int createIPV4(int port);
 
