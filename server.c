@@ -29,9 +29,7 @@ static void signal_handler(int signum){
 
 /* Cleans up the mq at exit */
 static void onexit_function(void){
-    
-
-}
+    }
 
 void showHelp(void){
     printf("Chat Program Server");
@@ -81,7 +79,6 @@ int cmdReads(message_t *msg){
 }
 
 
-/* CREATES OUR IPV4 STREAM SOCKET */
 int createIPV4(int port){
     int listenfd, sockfd, connfd;
     int client[MAX_CLIENTS];
@@ -194,15 +191,11 @@ int createIPV4(int port){
                     FD_CLR(sockfd, &allset);
                     client[i] = NOT_IN_USE;
 
-                    /* DEBUG */
                     if(debug_value > 3){
                         printf("DEBUG: Client lossed connection! \n");
                     }
-                    /*********/
                 }
-
                 recivMsg(msg, sockfd);
-
             }
         }
     }

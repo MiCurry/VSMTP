@@ -1,8 +1,25 @@
-/* Miles A. Curry
- * currymi@onid.orst.edu
- * CS344-001
- * Assignment #4 
- */
+/*                                              
+**                                               client.c
+**
+**                                  VSMTP - VERY Simple Mail Transfer Protocl 
+**
+**                               CS 371 - Introduction To Networking - Spring 2015
+**                                  Miles Curry - Chris Mendez - Harrison K
+**                                        MohammadJavad NoroozOliaee
+**                                         Oregon State University
+**
+** 
+** 
+** 
+** 
+** 
+** 
+** 
+** 
+** 
+**
+******************************/
+
 #ifndef SEVER_H
 #define SEVER_H
 
@@ -33,7 +50,11 @@ void showHelp(void);
 
 /* SERVER IP CONNECTION */
 int sendMsg(message_t msg, int sockfd);
+<<<<<<< HEAD
 int reciveMsg(message_t *msg, int sockFD);
+=======
+int reciveMsg(message_t msg, int sockFD);
+>>>>>>> master
 int serverInit(void);
 int createIPV4(int port);
 

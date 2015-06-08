@@ -1,91 +1,68 @@
-/****************************
- ** Miles Curry - Chris Mendez
- ** CS-372-001 - Spring 2015
- ** Project
- ******************************/
-
-/* Socket_client */
+/*                                              
+**                                               client.c
+**
+**                                  VSMTP - VERY Simple Mail Transfer Protocl 
+**
+**                               CS 371 - Introduction To Networking - Spring 2015
+**                                  Miles Curry - Chris Mendez - Harrison K
+**                                        MohammadJavad NoroozOliaee
+**                                         Oregon State University
+**
+** 
+** 
+** 
+** 
+** 
+** 
+** 
+** 
+** 
+**
+******************************/
+int debug_value = 0;
 
 #include "client.h"
 #include "statusCodes.h"
 
 flags_t flags;
 
-int debug_value = 2;
 static sig_atomic_t signal_recived = FALSE;
+void signal_handler(int signum){signal_recived = TRUE; exit(EXIT_FAILURE);}
+void onexit_function(void){;}
 
-/** Helper functions **/
-void usage(void){
-    
-}
-
-/* Signal Handler's & On Exit Functions */
-void signal_handler(int signum){
-    signal_recived = TRUE;
-    exit(EXIT_SUCCESS);
-}
-
-/* Cleans up the mq at exit */
-void onexit_function(void){
-
-
-}
-
-
-
-/************************/
-/***** CLIENT INIT ******/
-/* Connect to IP ADDRESS */
 int connectIP(int port, char ip[100]){
-    /* PORT = port number
-     * ip = ip in human readable format
-     * family = either 4 or 6 for IPv4 or IPv6
-     */
     struct sockaddr_in sa;
     int sockfd;
-    int numbytes;
-    char sendline[MAXLINE];
-    char recvline[MAXLINE];
 
-    /* CONVERT PRESENTATION IP TO NETWORK NAME*/
     inet_pton(AF_INET, ip, &sa.sin_addr.s_addr);
     sa.sin_port = htons(port);
     sa.sin_family = AF_INET;
 
-    /* CREATE SOCKET */
+    /* SOCKET CREATION */
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if(connect(sockfd, (struct sockaddr *) &sa, sizeof(sa)) != 0){
         perror("Could not connect");
         exit(EXIT_FAILURE);
     }
-
     if(debug_value > 0 ){
         printf("DEBUG: Connection Successfull \n");
     }
-
-
+    
     return sockfd;
 }
-
-
-
-/****************************/
-/****************************/
-/********* SHELL ************/
 
 /*** Shell Commands ***/
 int help(void){
     if(debug_value > 0){
-        printf("DEBUG: client help called succesfully\n");
+        printf("DEBUG: client_help\n");
     }
-    return 0;
+    return 1;
 }
 
 int client_add(char *params){
     if(debug_value > 0){
         printf("DEBUG: client_add\n");
     }
-
     return 1;
 }
 
@@ -93,7 +70,6 @@ int client_inbox(char *params){
     if(debug_value > 0){
         printf("DEBUG: client_inbox\n");
     }
-
     return 1;
 }
 
@@ -101,7 +77,6 @@ int client_read(char *params){
     if(debug_value > 0){
         printf("DEBUG: client_read\n");
     }
-
     return 1;
 }
 
@@ -140,6 +115,9 @@ int client_send(char *params){
 
 //    fillMessageHeader(&msg_1, "300", "1.1.1.1", "2.2.2.2", "Miles", "Jessica", "This is my message!");
 
+    if(debug_value > 0){
+        printf("DEBUG: client_send\n");
+    }
     return 1;
 }
 
@@ -147,23 +125,14 @@ int client_list(char *params){
     if(debug_value > 0){
         printf("DEBUG: client_list\n");
     }
-
-    return 1;
 }
 
 int client_isa(char *params){
-    message_t msg;
-
     if(debug_value > 0){
         printf("DEBUG: client_isa\n");
     }
-
-
-    
     return 1;
 }
-
-/*************************/
 
 void shell(void){
     int i, j;
@@ -223,9 +192,8 @@ void sendMsg(message_t msg){
     if(debug_value > 0){
         printf("DEBUG: Message sent successfully!\n");
     }
-
+    
     r_msg(msg_r, sockfd);
-
 }
 
 void r_msg(message_t msg_r, int sockfd){
@@ -249,32 +217,25 @@ int main(int argc, char **argv, char **envp){
     /* INIT FUNCTIONS */
     {
         umask(0);
-
-        /* DEBUG MESG TEMPLATE */
         if(debug_value > 0 ){
-            printf("DEBUG: \n");
+            printf("DEBUG: Debugger set to debug_value = %d \n", debug_value);
         }
-
-        /* AT EXIT AND SIGNAL HANDLERS */
         atexit(onexit_function);
         signal(SIGINT, signal_handler);
         signal(SIGHUP, signal_handler);     
     }
 
-    /* Taken from Instructor Chaneys' show IP */ 
     while((opt=getopt(argc, argv, "I:P:H:hv")) != -1){
         switch(opt){
             case 'v':
                 flags.flag_v = 1;
                 break;
-            /* IP ADDRESS */
             case 'I':
                 if(debug_value > 0){
                     printf("DEBUG: IP Addr = %s\n", optarg);
                 }
                 //strcpy(ip, optarg);
                 break;
-            /* PORT NUMBER */
             case 'P': 
                 if(debug_value > 0){ printf("DEBUG: PORT# = %s\n", optarg);
                 }
@@ -286,7 +247,6 @@ int main(int argc, char **argv, char **envp){
                 printf("\t -I: specify ip_address \n");
                 printf("\t -P: specify port_number - (Optional - Default = %d) \n", PORT_NUM);
                 printf("\t -h: Show this help message\n");
-
                 exit(EXIT_SUCCESS);
         }
 
@@ -301,14 +261,19 @@ int main(int argc, char **argv, char **envp){
 
     //message_t msg_1;
    // message_t msg_2;
+    /* Below are some quick tests of the system */
+    message_t msg_1;
+    message_t msg_2;
 
 //    fillMessageHeader(&msg_1, "300", "1.1.1.1", "2.2.2.2", "Miles", "Jessica", "This is my message!");
   //  printMessageHead(&msg_1, 1);
     //sendMsg(msg_1);
 
-//    fillMessageHeader(&msg_2, MSG_TYPE_CMD, "0.0.0.0", FLIP1, "Miles", "Jessica", "A Message to flip!");
- //   printMessageHead(&msg_2, 1);
-  //  sendMsg(msg_2);
+    fillMessageHeader(&msg_2, MSG_TYPE_CMD, "0.0.0.0", FLIP1, "Miles", "Jessica", "A Message to flip!");
+    printMessageHead(&msg_2, 1);
+    sendMsg(msg_2);
+    
+    shell();
 
     return 1;
 }
