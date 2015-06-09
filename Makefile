@@ -8,7 +8,7 @@
 
 
 CC=
-CFLAGS= -Wall -Wshadow -Wredundant-decls -Wmissing-declarations -Wmissing-prototypes -Wdeclaration-after-statement
+CFLAGS= -pthread -Wall -Wshadow 
 SERVER= server.c
 CLIENT= client.c
 SOURCES=
