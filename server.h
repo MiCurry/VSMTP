@@ -33,19 +33,5 @@ typedef struct flags_s{
     unsigned int flag_v : 1;    // Produces verbose output
 }flags_t;
 
-/* SIGNAL HANDLERS AND EXIT FUNCTIONS */
-static void onexit_function(void);
-static void signal_handler(int signum);
-
-
-/* SERVER COMMANDS */
-int createFile(char *name);
-int addUser(char userName[MAX_USER_NAME]);
-
-/* SERVER IP CONNECTION */
-int sendMsg(message_t msg, int sockfd);
-int reciveMsg(message_t msg_r, int sockFD);
-int serverInit(void);
-int createIPV4(int port);
 
 #endif

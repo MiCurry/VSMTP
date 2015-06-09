@@ -39,6 +39,54 @@ int createFile(char *name){
 } 
 
 
+int serverInit(void){
+    char *name = "userNames";
+    
+    //If user file does not exists, then create it and add oscar header..
+    if(-1 == access(name, F_OK)){
+        if(createFile(name) == 0){
+           if(debug_value > 0){
+                printf("DEBUG:  Could not create userName file %s\n", name);
+           }
+            exit(EXIT_FAILURE);
+        }; 
+        if(debug_value > 0){
+            printf("DEBUG: Username file created\n");
+        }
+        return 1;
+    }
+    if(debug_value > 0){
+        printf("DEBUG: Username file already exists\n");
+    }
+    return 1;
+}
+
+
+int sendMsg(message_t msg, int sockFD){
+    int numbytes;
+    
+    printf("DEBUG: Client FD: %d\n", sockFD);
+
+    numbytes = write(sockFD, (char *) &msg, sizeof(message_t));
+    if(numbytes == -1){
+        perror("Write Error");
+    }
+    if(debug_value > 0){
+        printMessageHead(&msg, 1);
+        printf("DEBUG: Message sent successfully!\n");
+    }
+    return 1;
+}
+
+int reciveMsg(message_t msg_r, int sockFD){ 
+    if(debug_value > 0){
+        printMessageHead(&msg_r, 1);
+    }
+
+    sendMsg(msg_r, sockFD);
+    return 1;
+}
+
 int addUser(char userName[MAX_USER_NAME]){
     if(debug_value > 0){
         printf("DEBUG: addUser function\n");
@@ -168,52 +216,6 @@ int createIPV4(int port){
 }
 
 
-int reciveMsg(message_t msg_r, int sockFD){ 
-    if(debug_value > 0){
-        printMessageHead(&msg_r, 1);
-    }
-
-    sendMsg(msg_r, sockFD);
-    return 1;
-}
-
-int sendMsg(message_t msg, int sockFD){
-    int numbytes;
-    
-    printf("DEBUG: Client FD: %d\n", sockFD);
-
-    numbytes = write(sockFD, (char *) &msg, sizeof(message_t));
-    if(numbytes == -1){
-        perror("Write Error");
-    }
-    if(debug_value > 0){
-        printMessageHead(&msg, 1);
-        printf("DEBUG: Message sent successfully!\n");
-    }
-    return 1;
-}
-
-int serverInit(void){
-    char *name = "userNames";
-    
-    //If user file does not exists, then create it and add oscar header..
-    if(-1 == access(name, F_OK)){
-        if(createFile(name) == 0){
-           if(debug_value > 0){
-                printf("DEBUG:  Could not create userName file %s\n", name);
-           }
-            exit(EXIT_FAILURE);
-        }; 
-        if(debug_value > 0){
-            printf("DEBUG: Username file created\n");
-        }
-        return 1;
-    }
-    if(debug_value > 0){
-        printf("DEBUG: Username file already exists\n");
-    }
-    return 1;
-}
 
 
 /* MAIN */

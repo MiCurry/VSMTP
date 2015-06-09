@@ -88,19 +88,11 @@ typedef struct message_s_1 {
 
 /* Helper Functions */
 void clearMsgStruct(message_t *msg);
-int fillMessageHeader(message_t *msg, 
-                     char status_code[STATUS_CODE_LEN], 
-                     char ip_source[IP_CHAR_LEN], 
-                     char ip_dest[IP_CHAR_LEN], 
-                     char user_source[MAX_USER_NAME], 
-                     char user_dest[MAX_USER_NAME], 
-                     char message[MAX_MESSAGE_LEN]);
+int fillMessageHeader(message_t *msg, char status_code[STATUS_CODE_LEN], char ip_source[IP_CHAR_LEN], char ip_dest[IP_CHAR_LEN], char user_source[MAX_USER_NAME], char user_dest[MAX_USER_NAME], char message[MAX_MESSAGE_LEN]);
 
 void printMessageHead(message_t *msg, int i);
 
-void clearMsgStruct(message_t *msg){
-
-}
+void clearMsgStruct(message_t *msg){}
 
 /* Call this function to fill the message header */
 int fillMessageHeader(message_t *msg, 
