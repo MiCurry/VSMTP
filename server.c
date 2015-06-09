@@ -4,16 +4,24 @@
  ** Project
  ******************************/
 
-#include "server.h"
+# include "header.h"
 
-#define TRUE 1
-#define FALSE 0
-#define BUF_SIZE 256
-#define LISTENQ 1024
-#define MAXLINE 4096
+# define TRUE 1
+# define FALSE 0
+# define BUF_SIZE 256
+# define LISTENQ 1024
+# define MAXLINE 4096
 
-#define MAX_CLIENTS FD_SETSIZE
-#define NOT_IN_USE -1
+# define MAX_CLIENTS FD_SETSIZE
+# define NOT_IN_USE -1
+
+# define SERVER_CONFIRM "CONFIRMED"
+# define PATH "~/Public/userNames"
+
+/* RAD-ASS FLAG STRUCT */
+typedef struct flags_s{ 
+    unsigned int flag_v : 1;    // Produces verbose output
+}flags_t;
 
 int debug_value = 1;
 

@@ -21,24 +21,27 @@
 ******************************/
 int debug_value = 0;
 
-#include "client.h"
 #include "statusCodes.h"
+#include "header.h"
+
+# define SERVER_CONFIRM "CONFIRMED"
+# define CREATE_USER_NAME "add"
+
+/* RAD-ASS FLAG STRUCT */
+typedef struct flags_s{ 
+    unsigned int flag_v : 1;    // If 1 produces verbose output
+    unsigned int no_pl_flag : 1;
+}flags_t;
+
 
 flags_t flags;
 
-int debug_value = 2;
-
-static sig_atomic_t signal_recived = FALSE;
-
-void signal_handler(int signum){ signal_recived = TRUE; exit(EXIT_SUCCESS);}
-void onexit_function(void){ }
-
-
-/************************/
-/*****   CLIENT    ******/
 static sig_atomic_t signal_recived = FALSE;
 void signal_handler(int signum){signal_recived = TRUE; exit(EXIT_FAILURE);}
 void onexit_function(void){;}
+
+
+
 
 int connectIP(int port, char ip[100]){
     struct sockaddr_in sa;
@@ -58,6 +61,45 @@ int connectIP(int port, char ip[100]){
         printf("DEBUG: Connection Successfull \n");
     }
     return sockfd;
+}
+
+void r_msg(message_t msg, int sockfd){
+    int nbytes;
+
+    nbytes = read(sockfd, (char *) &msg, sizeof(message_t));
+
+    if(debug_value > 0){
+        printf("DEBUG: Message received from server!\n");
+        printMessageHead(&msg, 1);
+    }
+}
+
+void sendMsg(message_t msg){
+    int numbytes;
+    int sockfd = -1;
+
+    sockfd = connectIP(PORT_NUM, FLIP1);
+
+    numbytes = write(sockfd, (char *) &msg, sizeof(message_t));
+    if(numbytes == -1){
+        perror("Write Error");
+        exit(EXIT_FAILURE);
+    }
+    if(debug_value > 0){
+        printf("DEBUG: Message sent successfully!\n");
+    }
+    
+    r_msg(msg, sockfd);
+}
+
+
+void init(void){
+    memset((void *) &flags, 0, sizeof(flags_t));
+    umask(0);
+    atexit(onexit_function);
+    signal(SIGINT, signal_handler);
+    signal(SIGHUP, signal_handler);     
+    pthread_exit((void *) pthread_self());
 }
 
 /*** Shell Commands ***/
@@ -146,15 +188,8 @@ int client_isa(char *params){
 
 /*** ZE CLIENT ***/
 void shell(void){
-    int i, j;
-
-    int argc;
-    char *argv[MAX_SIZE];
 
     char buffer[MAX_SIZE];
-    char command[MAX_SIZE];
-    char pl_buffer[PATH_MAX];
-
     message_t msg;
 
     while(1){
@@ -190,44 +225,6 @@ void shell(void){
     }
 }
 
-void sendMsg(message_t msg){
-    int numbytes;
-    int sockfd = -1;
-    message_t msg_r;
-
-    sockfd = connectIP(PORT_NUM, FLIP1);
-
-    numbytes = write(sockfd, (char *) &msg, sizeof(message_t));
-    if(numbytes == -1){
-        perror("Write Error");
-        exit(EXIT_FAILURE);
-    }
-    if(debug_value > 0){
-        printf("DEBUG: Message sent successfully!\n");
-    }
-    
-    r_msg(msg_r, sockfd);
-}
-
-void r_msg(message_t msg_r, int sockfd){
-    int nbytes;
-
-    nbytes = read(sockfd, (char *) &msg_r, sizeof(message_t));
-
-    if(debug_value > 0){
-        printf("DEBUG: Message received from server!\n");
-        printMessageHead(&msg_r, 1);
-    }
-}
-
-void init(void){
-    memset((void *) &flags, 0, sizeof(flags_t));
-    umask(0);
-    atexit(onexit_function);
-    signal(SIGINT, signal_handler);
-    signal(SIGHUP, signal_handler);     
-    pthread_exit((void *) pthread_self());
-}
 
 int main(int argc, char **argv, char **envp){
     int opt;
