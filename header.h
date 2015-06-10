@@ -86,14 +86,6 @@ typedef struct message_s_1 {
 
 # define MAX_SIZE sizeof(message_t)
 
-/* Helper Functions */
-void clearMsgStruct(message_t *msg);
-int fillMessageHeader(message_t *msg, char status_code[STATUS_CODE_LEN], char ip_source[IP_CHAR_LEN], char ip_dest[IP_CHAR_LEN], char user_source[MAX_USER_NAME], char user_dest[MAX_USER_NAME], char message[MAX_MESSAGE_LEN]);
-
-void printMessageHead(message_t *msg, int i);
-
-void clearMsgStruct(message_t *msg){}
-
 /* Call this function to fill the message header */
 int fillMessageHeader(message_t *msg, 
                      char status_code[STATUS_CODE_LEN], 
@@ -124,5 +116,20 @@ void printMessageHead(message_t *msg, int i){
         printf("\tMessage = %s\n", msg->message);
     }
 }
+
+int createFile(char *name){
+    int fd = -1;
+    int flag = O_APPEND | O_RDWR | O_CREAT;
+    int mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
+
+    fd = open(name, flag, mode);
+    if(fd == -1){
+        fprintf(stderr, "Could not create userName file. Errno = %d\n", errno);
+        perror("cannot create file");
+        return -1;
+    }
+    close(fd);
+    return 1;
+} 
 
 #endif 

@@ -1,7 +1,5 @@
 # include "header.h"
 
-# define TRUE 1
-# define FALSE 0
 # define BUF_SIZE 256
 # define LISTENQ 1024
 # define MAXLINE 4096
@@ -12,57 +10,20 @@
 # define SERVER_CONFIRM "CONFIRMED"
 # define PATH "~/Public/userNames"
 
-/* RAD-ASS FLAG STRUCT */
-typedef struct flags_s{ 
-    unsigned int flag_v : 1;    // Produces verbose output
-}flags_t;
 
 int debug_value = 1;
 
-flags_t flags;
-static sig_atomic_t signal_recived = FALSE;
 
+
+typedef struct flags_s{ 
+    unsigned int flag_v : 1;    // Produces verbose output
+}flags_t;
+flags_t flags;
+
+
+static sig_atomic_t signal_recived = FALSE;
 static void signal_handler(int signum){ signal_recived = TRUE; exit(EXIT_SUCCESS);}
 static void onexit_function(void){}
-
-int createFile(char *name){
-    int fd = -1;
-    int flag = O_APPEND | O_RDWR | O_CREAT;
-    int mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH;
-
-    fd = open(name, flag, mode);
-    if(fd == -1){
-        fprintf(stderr, "Could not create userName file. Errno = %d\n", errno);
-        perror("cannot create file");
-        return -1;
-    }
-    close(fd);
-    return 1;
-} 
-
-
-int serverInit(void){
-    char *name = "userNames";
-    
-    //If user file does not exists, then create it and add oscar header..
-    if(-1 == access(name, F_OK)){
-        if(createFile(name) == 0){
-           if(debug_value > 0){
-                printf("DEBUG:  Could not create userName file %s\n", name);
-           }
-            exit(EXIT_FAILURE);
-        }; 
-        if(debug_value > 0){
-            printf("DEBUG: Username file created\n");
-        }
-        return 1;
-    }
-    if(debug_value > 0){
-        printf("DEBUG: Username file already exists\n");
-    }
-    return 1;
-}
-
 
 int sendMsg(message_t msg, int sockFD){
     int numbytes;
@@ -96,8 +57,27 @@ int addUser(char userName[MAX_USER_NAME]){
     return 1;
 }
 
+int serverInit(int port){
+        /* Create File for userNames list */
+    {
+        char *name = "userNames";
 
-int createIPV4(int port){
+        if(-1 == access(name, F_OK)){
+            if(createFile(name) == 0){
+               if(debug_value > 0){
+                    printf("DEBUG:  Could not create userName file %s\n", name);
+               }
+                exit(EXIT_FAILURE);
+            }; 
+            if(debug_value > 0){
+                printf("DEBUG: Username file created\n");
+            }
+        }
+        if(debug_value > 0){
+            printf("DEBUG: Username file already exists\n");
+        }
+    }
+
     int listenfd, sockfd, connfd;
     int client[MAX_CLIENTS];
     int maxfd;
@@ -261,8 +241,7 @@ int main(int argc, char *argv[]){
     /* CREATE SERVER PORT */
 
     /* RECIVE MESSAGES */
-    serverInit();
-    createIPV4(port);
+    serverInit(port);
 
     //recMsgs();
 
